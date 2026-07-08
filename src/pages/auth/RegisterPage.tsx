@@ -28,8 +28,9 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const res = await api.post<AuthResponse>('/auth/register', data);
-      setAuth(res.data.token, res.data.user);
+      const res = await api.post<AuthResponse>('/register', data);
+      // BE returns token and user inside `data` field
+      setAuth(res.data.token, res.data.data);
       toast.success('Registrasi berhasil!');
       navigate('/');
     } catch {

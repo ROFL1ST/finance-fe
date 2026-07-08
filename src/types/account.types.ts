@@ -18,3 +18,10 @@ export interface AccountPayload {
   is_active: boolean;
   parent_id?: number | null;
 }
+
+// BE wraps all responses in: { success, message, data }
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}

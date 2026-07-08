@@ -1,8 +1,8 @@
 import axios from "axios";
-import { env } from "../config/env";
+import { useAuthStore } from "../store/authStore";
 
 const api = axios.create({
-    baseURL: env.apiUrl,
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
     headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -10,7 +10,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
+    // Access Zustand store outside React component using getState()
+    const token = useAuthStore.getState().token;
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;

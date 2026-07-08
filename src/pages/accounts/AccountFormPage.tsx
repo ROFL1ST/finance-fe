@@ -74,11 +74,16 @@ export default function AccountFormPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Akun Induk (Opsional)</label>
-            <select {...register('parent_id', { setValueAs: (v) => v === '' ? null : Number(v) })} className="w-full border rounded-lg px-3 py-2 text-sm">
+            <select
+              {...register('parent_id', { setValueAs: (v) => v === '' ? null : Number(v) })}
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            >
               <option value="">-- Tidak ada --</option>
-              {accounts.filter((a) => !isEdit || a.id !== Number(id)).map((a) => (
-                <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
-              ))}
+              {accounts
+                .filter((a) => !isEdit || a.id !== Number(id))
+                .map((a) => (
+                  <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
+                ))}
             </select>
           </div>
           <div className="flex items-center gap-2">

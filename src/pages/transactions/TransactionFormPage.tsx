@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
@@ -6,18 +6,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import api from '../../api/axios';
 import type { Account } from '../../types/account.types';
-import { Plus, Trash2 } from 'lucide-react';
 
-const entrySchema = z.object({
-  account_id: z.number({ required_error: 'Pilih akun' }),
-  type: z.enum(['debit', 'credit']),
-  amount: z.number().positive('Jumlah harus > 0'),
-});
-
+// BE: single entry per transaction
 const schema = z.object({
-  date: z.string().min(1, 'Tanggal wajib diisi'),
+  transaction_date: z.string().min(1, 'Tanggal wajib diisi'),
   description: z.string().min(1, 'Deskripsi wajib diisi'),
-  entries: z.array(entrySchema).min(1, 'Minimal 1 entri'),
+  account_id: z.number({ required_error: 'Pilih akun' }).min(1, 'Pilih akun'),
+  type: z.enum(['debit', 'credit']),
+  amount: z.number({ required_error: 'Jumlah wajib diisi' }).positive('Jumlah harus > 0'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -26,15 +22,13 @@ export default function TransactionFormPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      date: new Date().toISOString().split('T')[0],
-      entries: [{ account_id: 0, type: 'debit', amount: 0 }],
+      transaction_date: new Date().toISOString().split('T')[0],
+      type: 'debit',
     },
   });
-
-  const { fields, append, remove } = useFieldArray({ control, name: 'entries' });
 
   const { data: accounts = [] } = useQuery<Account[]>({
     queryKey: ['accounts'],
@@ -52,63 +46,79 @@ export default function TransactionFormPage() {
   });
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Tambah Transaksi</h1>
       <div className="bg-white rounded-2xl shadow-sm p-6">
         <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-              <input type="date" {...register('date')} className="w-full border rounded-lg px-3 py-2 text-sm" />
-              {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-              <input {...register('description')} className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Pembelian ATK..." />
-              {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
+            <input
+              type="date"
+              {...register('transaction_date')}
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            />
+            {errors.transaction_date && <p className="text-red-500 text-xs mt-1">{errors.transaction_date.message}</p>}
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Entri Transaksi</label>
-              <button type="button" onClick={() => append({ account_id: 0, type: 'debit', amount: 0 })} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800">
-                <Plus size={14} /> Tambah Entri
-              </button>
-            </div>
-            {fields.map((field, i) => (
-              <div key={field.id} className="flex gap-2 mb-2 items-start">
-                <select
-                  {...register(`entries.${i}.account_id`, { setValueAs: Number })}
-                  className="flex-1 border rounded-lg px-3 py-2 text-sm"
-                >
-                  <option value={0}>-- Pilih Akun --</option>
-                  {accounts.map((a) => <option key={a.id} value={a.id}>{a.code} - {a.name}</option>)}
-                </select>
-                <select {...register(`entries.${i}.type`)} className="border rounded-lg px-3 py-2 text-sm">
-                  <option value="debit">Debit</option>
-                  <option value="credit">Kredit</option>
-                </select>
-                <input
-                  type="number"
-                  {...register(`entries.${i}.amount`, { valueAsNumber: true })}
-                  className="w-32 border rounded-lg px-3 py-2 text-sm"
-                  placeholder="0"
-                />
-                {fields.length > 1 && (
-                  <button type="button" onClick={() => remove(i)} className="text-red-500 hover:text-red-700 pt-2">
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </div>
-            ))}
+            <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+            <input
+              {...register('description')}
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+              placeholder="Pembelian ATK..."
+            />
+            {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Akun</label>
+            <select
+              {...register('account_id', { valueAsNumber: true })}
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            >
+              <option value={0}>-- Pilih Akun --</option>
+              {accounts.map((a) => (
+                <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
+              ))}
+            </select>
+            {errors.account_id && <p className="text-red-500 text-xs mt-1">{errors.account_id.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
+            <select {...register('type')} className="w-full border rounded-lg px-3 py-2 text-sm">
+              <option value="debit">Debit</option>
+              <option value="credit">Kredit</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Jumlah (Rp)</label>
+            <input
+              type="number"
+              {...register('amount', { valueAsNumber: true })}
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+              placeholder="0"
+              min={1}
+            />
+            {errors.amount && <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>}
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={isSubmitting} className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            >
               {isSubmitting ? 'Menyimpan...' : 'Simpan'}
             </button>
-            <button type="button" onClick={() => navigate('/transactions')} className="border px-6 py-2 rounded-lg text-sm">Batal</button>
+            <button
+              type="button"
+              onClick={() => navigate('/transactions')}
+              className="border px-6 py-2 rounded-lg text-sm"
+            >
+              Batal
+            </button>
           </div>
         </form>
       </div>

@@ -10,7 +10,7 @@ export default function AccountListPage() {
 
   const { data: accounts = [], isLoading } = useQuery<Account[]>({
     queryKey: ['accounts'],
-    queryFn: () => api.get('/accounts').then((r) => r.data.data),
+    queryFn: () => api.get('/accounts').then((r) => r.data.data), // BE: { success, data }
   });
 
   const deleteMutation = useMutation({
