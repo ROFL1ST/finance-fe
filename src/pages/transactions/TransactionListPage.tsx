@@ -7,7 +7,6 @@ import type { Account } from '../../types/account.types';
 import { Plus } from 'lucide-react';
 
 export default function TransactionListPage() {
-  // BE accepts: transaction_date (exact date), account (name search)
   const [filters, setFilters] = useState({ transaction_date: '', account: '' });
 
   const { data: transactions = [], isLoading } = useQuery<Transaction[]>({

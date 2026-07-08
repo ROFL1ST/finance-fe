@@ -16,7 +16,6 @@ export interface RegisterPayload {
   password_confirmation: string;
 }
 
-// BE returns: { success, message, token, data: User }
 export interface AuthResponse {
   success: boolean;
   message: string;

@@ -20,7 +20,6 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function SummaryPage() {
-  // BE: GET /summary (not /accounts/summary)
   const { data: summary = [], isLoading } = useQuery<SummaryItem[]>({
     queryKey: ["summary"],
     queryFn: () => api.get("/summary").then((r) => r.data.data),
