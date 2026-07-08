@@ -1,32 +1,32 @@
 export type EntryType = 'debit' | 'credit';
 
-export interface TransactionEntry {
+// BE: single entry per transaction (not an array)
+export interface Transaction {
+  id: number;
+  transaction_date: string; // BE uses transaction_date, not date
+  description: string;
   account_id: number;
+  entry_type: EntryType;
+  amount: number;
   account?: {
     id: number;
     code: string;
     name: string;
+    type: string;
   };
-  type: EntryType;
-  amount: number;
-}
-
-export interface Transaction {
-  id: number;
-  date: string;
-  description: string;
-  entries: TransactionEntry[];
   created_at: string;
 }
 
 export interface TransactionPayload {
-  date: string;
+  transaction_date: string;
   description: string;
-  entries: Omit<TransactionEntry, 'account'>[];
+  account_id: number;
+  entry_type: EntryType;
+  amount: number;
 }
 
+// Filter params accepted by BE: transaction_date, account
 export interface TransactionFilters {
-  date_from?: string;
-  date_to?: string;
-  account_id?: number;
+  transaction_date?: string;
+  account?: string; // account name search
 }

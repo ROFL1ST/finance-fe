@@ -24,7 +24,7 @@ export default function LoginPage() {
   const onSubmit = async (data: FormData) => {
     try {
       const res = await api.post<AuthResponse>('/login', data);
-      setAuth(res.data.token, res.data.user);
+      setAuth(res.data.token, res.data.data);
       toast.success('Login berhasil!');
       navigate('/');
     } catch {
