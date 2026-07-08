@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import api from '../../api/axios';
+import api from '../../api/axiosClient';
 import type { Account } from '../../types/account.types';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 
@@ -59,7 +59,7 @@ export default function AccountListPage() {
                   <td className="px-6 py-4 font-mono">{acc.code}</td>
                   <td className="px-6 py-4 font-medium">{acc.name}</td>
                   <td className="px-6 py-4">
-                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs">{acc.type}</span>
+                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs">{acc.account_type}</span>
                   </td>
                   <td className="px-6 py-4 text-gray-500">{acc.parent?.name ?? '-'}</td>
                   <td className="px-6 py-4">

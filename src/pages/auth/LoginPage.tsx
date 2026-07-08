@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import api from '../../api/axios';
+import api from '../../api/axiosClient';
 import { useAuthStore } from '../../store/authStore';
 import type { AuthResponse } from '../../types/auth.types';
 
@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const res = await api.post<AuthResponse>('/auth/login', data);
+      const res = await api.post<AuthResponse>('/login', data);
       setAuth(res.data.token, res.data.user);
       toast.success('Login berhasil!');
       navigate('/');

@@ -5,14 +5,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
-import api from '../../api/axios';
+import api from '../../api/axiosClient';
 import type { Account, AccountType } from '../../types/account.types';
 
-const ACCOUNT_TYPES: AccountType[] = ['Asset', 'Liability', 'Equity', 'Revenue', 'Expense'];
+const ACCOUNT_TYPES: AccountType[] = ['asset', 'liability', 'equity', 'revenue', 'expense'];
 
 const schema = z.object({
   name: z.string().min(1, 'Nama wajib diisi'),
-  type: z.enum(['Asset', 'Liability', 'Equity', 'Revenue', 'Expense']),
+  account_type: z.enum(['asset', 'liability', 'equity', 'revenue', 'expense']),
   is_active: z.boolean(),
   parent_id: z.number().nullable().optional(),
 });
@@ -68,7 +68,7 @@ export default function AccountFormPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
-            <select {...register('type')} className="w-full border rounded-lg px-3 py-2 text-sm">
+            <select {...register('account_type')} className="w-full border rounded-lg px-3 py-2 text-sm">
               {ACCOUNT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>

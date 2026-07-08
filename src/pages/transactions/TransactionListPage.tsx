@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import api from '../../api/axios';
+import api from '../../api/axiosClient';
 import type { Transaction } from '../../types/transaction.types';
 import type { Account } from '../../types/account.types';
 import { Plus } from 'lucide-react';

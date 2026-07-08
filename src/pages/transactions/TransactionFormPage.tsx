@@ -1,23 +1,19 @@
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import api from '../../api/axios';
+import api from '../../api/axiosClient';
 import type { Account } from '../../types/account.types';
-import { Plus, Trash2 } from 'lucide-react';
-
-const entrySchema = z.object({
-  account_id: z.number({ required_error: 'Pilih akun' }),
-  type: z.enum(['debit', 'credit']),
-  amount: z.number().positive('Jumlah harus > 0'),
-});
+ 
 
 const schema = z.object({
   date: z.string().min(1, 'Tanggal wajib diisi'),
   description: z.string().min(1, 'Deskripsi wajib diisi'),
-  entries: z.array(entrySchema).min(1, 'Minimal 1 entri'),
+  account_id: z.number().min(1, 'Pilih akun'),
+  type: z.enum(['debit', 'credit']),
+  amount: z.number().positive('Jumlah harus > 0'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -26,15 +22,13 @@ export default function TransactionFormPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
-      entries: [{ account_id: 0, type: 'debit', amount: 0 }],
+      account_id: 0, type: 'debit', amount: 0
     },
   });
-
-  const { fields, append, remove } = useFieldArray({ control, name: 'entries' });
 
   const { data: accounts = [] } = useQuery<Account[]>({
     queryKey: ['accounts'],
@@ -70,38 +64,15 @@ export default function TransactionFormPage() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Entri Transaksi</label>
-              <button type="button" onClick={() => append({ account_id: 0, type: 'debit', amount: 0 })} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800">
-                <Plus size={14} /> Tambah Entri
-              </button>
-            </div>
-            {fields.map((field, i) => (
-              <div key={field.id} className="flex gap-2 mb-2 items-start">
-                <select
-                  {...register(`entries.${i}.account_id`, { setValueAs: Number })}
-                  className="flex-1 border rounded-lg px-3 py-2 text-sm"
-                >
-                  <option value={0}>-- Pilih Akun --</option>
-                  {accounts.map((a) => <option key={a.id} value={a.id}>{a.code} - {a.name}</option>)}
-                </select>
-                <select {...register(`entries.${i}.type`)} className="border rounded-lg px-3 py-2 text-sm">
-                  <option value="debit">Debit</option>
-                  <option value="credit">Kredit</option>
-                </select>
-                <input
-                  type="number"
-                  {...register(`entries.${i}.amount`, { valueAsNumber: true })}
-                  className="w-32 border rounded-lg px-3 py-2 text-sm"
-                  placeholder="0"
-                />
-                {fields.length > 1 && (
-                  <button type="button" onClick={() => remove(i)} className="text-red-500 hover:text-red-700 pt-2">
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </div>
-            ))}
+            <label className="block text-sm font-medium text-gray-700 mb-1">Akun</label>
+            <select
+              {...register('account_id', { valueAsNumber: true })}
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            >
+              <option value={0}>-- Pilih Akun --</option>
+              {accounts.map((a) => <option key={a.id} value={a.id}>{a.code} - {a.name}</option>)}
+            </select>
+            {errors.account_id && <p className="text-red-500 text-xs mt-1">{errors.account_id.message}</p>}
           </div>
 
           <div className="flex gap-3 pt-2">

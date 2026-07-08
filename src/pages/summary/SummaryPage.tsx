@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import api from '../../api/axios';
+import api from '../../api/axiosClient';
 import type { Account } from '../../types/account.types';
 
 const TYPE_COLORS: Record<string, string> = {
@@ -13,12 +13,12 @@ const TYPE_COLORS: Record<string, string> = {
 export default function SummaryPage() {
   const { data: accounts = [], isLoading } = useQuery<Account[]>({
     queryKey: ['accounts-summary'],
-    queryFn: () => api.get('/accounts/summary').then((r) => r.data.data),
+    queryFn: () => api.get('/summary').then((r) => r.data.data),
   });
 
   const groupedByType = accounts.reduce((acc, account) => {
-    if (!acc[account.type]) acc[account.type] = [];
-    acc[account.type].push(account);
+    if (!acc[account.account_type]) acc[account.account_type] = [];
+    acc[account.account_type].push(account);
     return acc;
   }, {} as Record<string, Account[]>);
 
