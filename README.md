@@ -155,6 +155,24 @@ npm run preview
 
 ---
 
+---
+
+# Menjalankan Aplikasi Menggunakan Docker
+
+Build dan jalankan seluruh container.
+
+```bash
+docker compose up --build
+```
+
+
+Aplikasi dapat diakses melalui:
+
+```
+http://localhost:5173
+```
+
+---
 
 
 ## Koneksi ke Backend
