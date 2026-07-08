@@ -1,18 +1,18 @@
+// BE uses entry_type (not type) based on SummaryService CASE WHEN entry_type
 export type EntryType = 'debit' | 'credit';
 
-// BE: single entry per transaction (not an array)
 export interface Transaction {
   id: number;
-  transaction_date: string; // BE uses transaction_date, not date
+  transaction_date: string;
   description: string;
   account_id: number;
-  entry_type: EntryType;
+  entry_type: EntryType; // BE column is entry_type
   amount: number;
   account?: {
     id: number;
     code: string;
     name: string;
-    type: string;
+    account_type: string;
   };
   created_at: string;
 }
@@ -25,8 +25,8 @@ export interface TransactionPayload {
   amount: number;
 }
 
-// Filter params accepted by BE: transaction_date, account
+// Filter params: transaction_date (exact), account (name ILIKE search)
 export interface TransactionFilters {
   transaction_date?: string;
-  account?: string; // account name search
+  account?: string;
 }

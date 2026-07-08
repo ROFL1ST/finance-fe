@@ -4,15 +4,15 @@ import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import api from '../../api/axiosClient';
+import api from '../../api/axios';
 import type { Account } from '../../types/account.types';
 
 const schema = z.object({
   transaction_date: z.string().min(1, 'Tanggal wajib diisi'),
   description: z.string().min(1, 'Deskripsi wajib diisi'),
-  account_id: z.number().min(1, 'Pilih akun'),
-  entry_type: z.enum(['debit', 'credit']),
-  amount: z.number().positive('Jumlah harus > 0'),
+  account_id: z.number({ required_error: 'Pilih akun' }).min(1, 'Pilih akun'),
+  entry_type: z.enum(['debit', 'credit']), // BE column: entry_type
+  amount: z.number({ required_error: 'Jumlah wajib diisi' }).positive('Jumlah harus > 0'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -84,7 +84,7 @@ export default function TransactionFormPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Tipe Entri</label>
             <select {...register('entry_type')} className="w-full border rounded-lg px-3 py-2 text-sm">
               <option value="debit">Debit</option>
               <option value="credit">Kredit</option>

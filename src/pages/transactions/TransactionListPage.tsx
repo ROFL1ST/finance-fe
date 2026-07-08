@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import api from '../../api/axiosClient';
+import api from '../../api/axios';
 import type { Transaction } from '../../types/transaction.types';
 import type { Account } from '../../types/account.types';
 import { Plus } from 'lucide-react';
 
 export default function TransactionListPage() {
-  // BE accepts: transaction_date (exact date), account (name search)
   const [filters, setFilters] = useState({ transaction_date: '', account: '' });
 
   const { data: transactions = [], isLoading } = useQuery<Transaction[]>({
@@ -40,7 +39,6 @@ export default function TransactionListPage() {
         </Link>
       </div>
 
-      {/* Filters */}
       <div className="bg-white rounded-2xl shadow-sm p-4 mb-4 flex gap-4 flex-wrap">
         <div>
           <label className="block text-xs text-gray-500 mb-1">Tanggal</label>
@@ -92,7 +90,9 @@ export default function TransactionListPage() {
                   <td className="px-6 py-4">{trx.account?.name ?? '-'}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      trx.entry_type === 'debit' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      trx.entry_type === 'debit'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
                     }`}>
                       {trx.entry_type === 'debit' ? 'Debit' : 'Kredit'}
                     </span>
