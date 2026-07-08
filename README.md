@@ -6,21 +6,20 @@ Frontend SPA untuk sistem pencatatan keuangan sederhana yang dibangun menggunaka
 
 ## Tech Stack
 
-| Teknologi | Versi | Kegunaan |
-|---|---|---|
-| React | 19 | UI Framework |
-| TypeScript | 6 | Type safety |
-| Vite | 8 | Build tool & dev server |
-| Tailwind CSS | 4 | Styling |
-| React Router DOM | 7 | Client-side routing |
-| TanStack React Query | 5 | Server state & data fetching |
-| TanStack React Table | 8 | Tabel dengan sorting |
-| React Hook Form | 7 | Form management |
-| Zod | 4 | Schema validasi form |
-| Zustand | 5 | Client state (auth) |
-| Axios | 1 | HTTP client |
-| Sonner | 2 | Toast notifications |
-| Lucide React | — | Icon library |
+- React 19
+- TypeScript 6
+- Vite 8
+- Tailwind CSS 4
+- React Router DOM 7
+- TanStack React Query 5
+- TanStack React Table 8
+- React Hook Form 7
+- Zod 4
+- Zustand 5
+- Axios 1
+- Sonner 2
+- Lucide React
+- Docker
 
 ---
 
