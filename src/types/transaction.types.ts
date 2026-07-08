@@ -1,4 +1,3 @@
-// BE uses entry_type (not type) based on SummaryService CASE WHEN entry_type
 export type EntryType = 'debit' | 'credit';
 
 export interface Transaction {

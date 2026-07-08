@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/axiosClient';
 
-// Exact shape from SummaryService.php DB query
+
 interface SummaryItem {
   id: number;
-  code: string;         // accounts.code
-  name: string;         // accounts.name
-  account_type: string; // accounts.account_type
-  balance: number | string; // DB raw SUM — can come as string, can be negative
+  code: string;        
+  name: string;         
+  account_type: string; 
+  balance: number | string;
 }
 
 const TYPE_COLORS: Record<string, string> = {
@@ -31,7 +31,7 @@ const formatIDR = (val: number | string | undefined | null): string => {
     currency: 'IDR',
     minimumFractionDigits: 0,
   }).format(abs);
-  // Prefix minus OUTSIDE currency symbol: -Rp1.000 instead of Rp-1.000
+  
   return n < 0 ? `-${formatted}` : formatted;
 };
 
